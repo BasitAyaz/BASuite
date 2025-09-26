@@ -1,0 +1,8 @@
+.babutton {
+    padding: 20px 30px;
+}
+
+.ant-input-otp-input {
+    border-radius: 0 !important;
+    /* smaller corners */
+}
