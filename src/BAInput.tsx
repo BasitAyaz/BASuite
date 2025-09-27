@@ -75,7 +75,7 @@ export default function BAinput(props: propsType) {
             {inputType === "maskinput" && mask ? <PatternFormat
                 value={value}
                 onChange={(e) => {
-                    const rawNumber = e.target.value.replace(/\D/g, ""); // Remove all non-numeric characters
+                    const rawNumber = e.target.value?.replace(/\D/g, ""); // Remove all non-numeric characters
                     onChange(rawNumber || null)
                 }}
                 customInput={Input}

@@ -7,17 +7,11 @@ export let showLoader: (messageTxt: boolean) => void;
 export let appTheme: object;
 
 type propsType = {
-    apiInvironment: {
-        baseURL: string,
-        baseHeaders?: any
-    }
     colorPrimary?: string,
     children?: any
 }
 
-export default function MasterContainer({ colorPrimary, children, apiInvironment }: propsType) {
-
-
+export default function MasterContainer({ colorPrimary, children }: propsType) {
 
     appTheme = {
         components: {
@@ -58,6 +52,14 @@ export default function MasterContainer({ colorPrimary, children, apiInvironment
             Pagination: {
                 colorPrimary: colorPrimary || '#13999e',
                 borderRadius: 4,
+                algorithm: true, // Enable algorithm
+            },
+            Radio: {
+                colorPrimary: colorPrimary || '#13999e',
+                algorithm: true, // Enable algorithm
+            },
+            Upload: {
+                colorPrimary: colorPrimary || '#13999e',
                 algorithm: true, // Enable algorithm
             },
             token: {

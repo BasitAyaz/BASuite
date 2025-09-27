@@ -1,6 +1,6 @@
 {
   "name": "basuite",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "BASuite is a developer-first React and Next.js component suite, blending the power of Tailwind CSS with the elegance of Ant Design.",
   "license": "MIT",
   "author": "Basit Ahmed",
@@ -29,6 +29,7 @@
     "@rollup/plugin-typescript": "^12.1.4",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@ant-design/v5-patch-for-react-19": "^1.0.0",
     "react": "^19.1.1",
     "rollup-plugin-dts": "^6.2.3",
     "rollup-plugin-peer-deps-external": "^2.2.4",

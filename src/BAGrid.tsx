@@ -36,40 +36,10 @@ export default function BAGrid(props: propsType) {
     loading,
     displayField,
     onRowClick,
-    allowMultiple,
-    setDataSource,
-    allowSearch,
-    handleSearch,
-    colSearchObj = {},
-    allowDelete,
-    onDelete
   } = props;
 
   const { token }: any = theme.useToken();
 
-  const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
-  const [gridSearchObj, setGridSearchObj] = useState<any>(colSearchObj);
-
-  const onRowSelect = (data: any, i: number, checked: boolean) => {
-    if (datasourse.length) {
-      const listData = [...datasourse];
-      listData[i] = { ...data, isSelected: checked };
-      const selectionRemaining = listData.find((el) => !el.isSelected);
-      if (!selectionRemaining) setIsAllSelected(true);
-      else setIsAllSelected(false);
-      setDataSource(listData);
-    }
-  };
-
-  const onSelectAll = (checked: boolean) => {
-    setIsAllSelected(checked);
-    const listData = [...datasourse];
-    listData.map((item) => ({ ...item, isSelected: checked }));
-    setDataSource(listData.map((item) => ({ ...item, isSelected: checked })));
-  };
-
-  const indeterminate =
-    !isAllSelected && datasourse?.find((el) => el.isSelected);
 
   return (
     <BABox
@@ -85,19 +55,6 @@ export default function BAGrid(props: propsType) {
       >
         <thead style={{ backgroundColor: token.token.colorPrimary, color: "white" }}>
           <tr>
-            {allowSearch && <th></th>}
-            {allowMultiple && (
-              <th>
-                <BACheckbox
-                  onChange={(e) => onSelectAll(e.target.checked)}
-                  checked={isAllSelected || false}
-                  isMultiple={indeterminate}
-                />
-              </th>
-            )}
-            {allowDelete && <th
-              className={`p-1 text-left text-xs font-medium text-plain tracking-wider`}
-            >Action</th>}
             {cols.map((col: any, index: number) => (
               <th
                 key={index}
@@ -118,20 +75,6 @@ export default function BAGrid(props: propsType) {
                 style={{ backgroundColor: row.rowColor && typeof row.rowColor === "function" ? row.rowColor(row) : rowIndex % 2 === 1 ? "" : "#edf0f4" }}
                 onClick={() => (onRowClick ? onRowClick(rowIndex, row) : {})}
               >
-                {allowSearch && <td></td>}
-                {allowMultiple && (
-                  <td className="pl-1">
-                    <BACheckbox
-                      checked={row.isSelected || false}
-                      onChange={(e) =>
-                        onRowSelect(row, rowIndex, e.target.checked)
-                      }
-                    />
-                  </td>
-                )}
-                {allowDelete && onDelete && <td
-                  className={`p-1 whitespace-nowrap text-sm text-gray-900 h-0.5`}
-                ><DeleteOutlined className="text-xl m-1 hover:text-red-600" onClick={() => onDelete(rowIndex)} /></td>}
                 {cols.map((col: any, colIndex: number) => (
                   <td
                     key={colIndex}

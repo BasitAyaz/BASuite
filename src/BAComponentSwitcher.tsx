@@ -12,6 +12,8 @@ import BAFieldset from "./BAFieldset";
 import BADragDropFile from "./BADragDrop";
 import BATextarea from "./BATextarea";
 import BAImagePicker from "./BAImagePicker";
+import BACheckbox from "./BACheckbox";
+import BARadio from "./BARadio";
 
 
 type propsType = {
@@ -255,6 +257,44 @@ export default function BAComponentSwitcher(props: propsType) {
                     }
                 />
             );
+        case "checkbox":
+            return (
+                <BACheckbox
+                    required={element.required}
+                    disabled={element.disabled}
+                    label={element.label}
+                    checked={model && model[element.key] ? model[element.key] : null}
+                    onChange={(e: any) => {
+                        setModel({ ...model, [element.key]: e.target.checked });
+                        if (element.ChangeEv) {
+                            element.ChangeEv(null, e);
+                        }
+                        if (rowChangeEv) {
+                            rowChangeEv(e, e, element, rowIndex)
+                        }
+                    }
+                    }
+                />
+            );
+        case "radio":
+            return (
+                <BARadio
+                    required={element.required}
+                    disabled={element.disabled}
+                    label={element.label}
+                    value={model && model[element.key] ? model[element.key] : null}
+                    onChange={(e: any) => {
+                        setModel({ ...model, [element.key]: e.target.value });
+                        if (element.ChangeEv) {
+                            element.ChangeEv(null, e);
+                        }
+                        if (rowChangeEv) {
+                            rowChangeEv(e, e, element, rowIndex);
+                        }
+                    }}
+                    options={element.options || []}
+                />
+            );
         case "custombody":
             return (
                 <BABox className={element.className}>
@@ -274,12 +314,6 @@ export default function BAComponentSwitcher(props: propsType) {
                     <BAPera className="">{model[element.key]}</BAPera>
                 </BABox>
             );
-        case "fieldset":
-            return (
-                <>
-                    <BAFieldset title={element.label} body={element.body} />
-                </>
-            );
         case "imageupload":
             return (
                 <>
@@ -293,7 +327,10 @@ export default function BAComponentSwitcher(props: propsType) {
         case "dragfile":
             return (
                 <>
-                    <BADragDropFile onFileUpload={(file) => uploadFile(file, element.key)} uploadText={element.label} />
+                    <BADragDropFile
+                        onFileUpload={(file) => uploadFile(file, element.key)}
+                        uploadText={element.label}
+                    />
                 </>
             )
         default:
@@ -304,7 +341,7 @@ export default function BAComponentSwitcher(props: propsType) {
 
 export type formElement = {
     col: 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5 | 5.5 | 6 | 6.5 | 7 | 7.5 | 8 | 8.5 | 9 | 9.5 | 10 | 10.5 | 11 | 11.5 | 12,
-    elementType: "number" | "input" | "currency" | "datepicker" | "select" | "radio" | "date" | "lookup" | "checkbox" | "boolean" | "textarea" | "passwordinput" | "button" | "imagepicker" | "custombody" | "heading" | "fieldset" | "upload" | "text" | "dragfile" | "imageupload",
+    elementType: "input" | "datepicker" | "select" | "radio" | "lookup" | "checkbox" | "boolean" | "textarea" | "button" | "custombody" | "heading" | "text" | "dragfile" | "imageupload",
     key: string,
     label: string,
     placeholder?: string,

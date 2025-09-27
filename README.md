@@ -41,6 +41,22 @@ npm install basuite
 
 ---
 
+## ⚙️ PostCSS Configuration
+
+To ensure BASuite components are styled correctly, add the following to your `postcss.config.mjs`:
+
+```js
+// postcss.config.mjs
+module.exports = {
+  content: [
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/basuite/**/*.{js,ts,jsx,tsx}", // 👈 add this line
+  ],
+};
+```
+
+This configuration enables Tailwind CSS to scan BASuite components for class names and generate the necessary styles.
+
 ## 💡 Why BASuite?
 
 - **Modern UI Kit:** Built for React and Next.js projects.

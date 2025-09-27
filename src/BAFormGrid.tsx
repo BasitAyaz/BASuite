@@ -7,6 +7,7 @@ import BAButton from "./BAButton";
 import BAIconButton from "./BAIconButton";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import BAPera from "./BAPera";
+import BALoader from "./BALoader";
 
 type actionType = {
   icon: React.ReactNode;
@@ -64,7 +65,7 @@ export default function BAFormGrid(props: propsType) {
     if (onAddRow) {
       obj = onAddRow() || {};
     }
-    setDatasourse([...datasourse, obj]);
+    if (setDatasourse) setDatasourse([...datasourse, obj]);
   };
 
   const deleteRow = (index: number) => {
@@ -72,132 +73,133 @@ export default function BAFormGrid(props: propsType) {
     if (onDeleteRow) {
       onDeleteRow();
     }
-    setDatasourse([...datasourse]);
+    if (setDatasourse) setDatasourse([...datasourse]);
   };
 
   return (
     <BABox className={"overflow-x-auto"}>
-      {datasourse && datasourse.length > 0 ? (
+      {loading ? <BABox className="flex justify-center flex-col items-center">
+        <BALoader />
+        <BAPera>Loading...</BAPera>
+      </BABox> : datasourse && datasourse.length > 0 ? (
         <>
-          <table
-            className={
-              loading
-                ? "blur-background min-w-full divide-y rounded-lg overflow-hidden divide-gray-200 border"
-                : "min-w-full divide-y rounded-lg overflow-hidden divide-gray-200 border"
-            }
-          >
-            <thead className="bg-gray-50">
-              <tr>
-                {!disableAction && <th className="w-[50px]"></th>}
-                {cols.map((col: any, index: number) => (
-                  <th
-                    key={index}
-                    className={`p-2 text-center text-xs font-medium text-black tracking-wider ${col.className ? col.className : ""
-                      }`}
-                  >
-                    {col.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200 ">
-              {datasourse.map((row: any, rowIndex: number) => (
-                <React.Fragment key={rowIndex}>
-                  <tr
-                  // style={{height:'12px'}}
-                  >
-                    {!disableAction && (
-                      <td className="text-center flex justify-center">
-                        <DeleteOutlined style={{ color: `${disableForm ? "lightgray" : ""}` }} className={`text-xl m-1 hover:text-red-600`} onClick={() => !disableForm && deleteRow(rowIndex)} />
-                        {action &&
-                          action?.map((item: actionType, key) => (
-                            <BAIconButton
-                              key={key}
-                              className="m-1"
-                              icon={item.icon}
-                              disabled={
-                                typeof item.disabled === "function"
-                                  ? item.disabled(row)
-                                  : item.disabled
-                              }
-                              onClick={() => item.onClick(row, rowIndex)}
+          <BABox className="border border-[lightgrey]">
+            <table
+              className="min-w-full divide-y rounded-lg overflow-hidden divide-gray-200 border"
+            >
+              <thead className="bg-gray-50">
+                <tr>
+                  {!disableAction && <th className="w-[50px]"></th>}
+                  {cols.map((col: any, index: number) => (
+                    <th
+                      key={index}
+                      className={`p-2 text-center text-xs font-medium text-black tracking-wider ${col.className ? col.className : ""
+                        }`}
+                    >
+                      {col.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200 ">
+                {datasourse.map((row: any, rowIndex: number) => (
+                  <React.Fragment key={rowIndex}>
+                    <tr
+                    // style={{height:'12px'}}
+                    >
+                      {!disableAction && (
+                        <td className="text-center flex justify-center">
+                          <DeleteOutlined style={{ color: `${disableForm ? "lightgray" : ""}` }} className={`text-xl m-1 hover:text-red-600`} onClick={() => !disableForm && deleteRow(rowIndex)} />
+                          {action &&
+                            action?.map((item: actionType, key) => (
+                              <BAIconButton
+                                key={key}
+                                className="m-1"
+                                icon={item.icon}
+                                disabled={
+                                  typeof item.disabled === "function"
+                                    ? item.disabled(row)
+                                    : item.disabled
+                                }
+                                onClick={() => item.onClick(row, rowIndex)}
+                              />
+                            ))}
+                        </td>
+                      )}
+                      {cols.map((col: any, colIndex: number) => (
+                        <td
+                          key={colIndex}
+                          className={`whitespace-nowrap border text-sm text-gray-900 w-[${col.width ? col.width : 'full'}] ${col.className ? col.className : ""
+                            }`}
+                        >
+                          {col.displayField ? (
+                            col.displayField(row, rowIndex)
+                          ) : col.element ? (
+                            <BAComponentSwitcher
+                              disabledForm={disableForm}
+                              model={datasourse[rowIndex]}
+                              setModel={setRowObj}
+                              element={{
+                                ...col.element,
+                                disabled: typeof col.element.disabled === "function" ? col.element.disabled(row) : col.element.disabled,
+                                options: typeof col.element.options === "function" ? col.element.options(row, rowIndex) : col.element.options,
+                                fillObj: row[col.element.fillObjName]
+                              }}
+                              rowChangeEv={(
+                                ev: any,
+                                val: any,
+                                element: any,
+                                index: number
+                              ) => {
+
+                                datasourse[rowIndex] = {
+                                  ...datasourse[rowIndex],
+                                  [element.key]: val ? val[element.key] : ""
+                                };
+
+                                setDatasourse([...datasourse]);
+                                if (updatedArr) {
+                                  const existingIndex = updatedArr.findIndex(
+                                    (item) =>
+                                      item.Seq_No === datasourse[rowIndex].Seq_No
+                                  );
+                                  if (existingIndex === -1)
+                                    updatedArr.push({ ...datasourse[rowIndex] });
+                                  else
+                                    updatedArr[existingIndex] =
+                                      datasourse[rowIndex];
+                                  setUpdatedArr([...updatedArr]);
+                                }
+                              }}
+                              rowIndex={rowIndex}
                             />
-                          ))}
-                      </td>
-                    )}
-                    {cols.map((col: any, colIndex: number) => (
-                      <td
-                        key={colIndex}
-                        className={`whitespace-nowrap border text-sm text-gray-900 w-[${col.width ? col.width : 'full'}] ${col.className ? col.className : ""
-                          }`}
-                      >
-                        {col.displayField ? (
-                          col.displayField(row, rowIndex)
-                        ) : col.element ? (
-                          <BAComponentSwitcher
-                            disabledForm={disableForm}
-                            model={datasourse[rowIndex]}
-                            setModel={setRowObj}
-                            element={{
-                              ...col.element,
-                              disabled: typeof col.element.disabled === "function" ? col.element.disabled(row) : col.element.disabled,
-                              options: typeof col.element.options === "function" ? col.element.options(row, rowIndex) : col.element.options,
-                              fillObj: row[col.element.fillObjName]
-                            }}
-                            rowChangeEv={(
-                              ev: any,
-                              val: any,
-                              element: any,
-                              index: number
-                            ) => {
-
-                              datasourse[rowIndex] = {
-                                ...datasourse[rowIndex],
-                                [element.key]: val ? val[element.key] : ""
-                              };
-
-                              setDatasourse([...datasourse]);
-                              if (updatedArr) {
-                                const existingIndex = updatedArr.findIndex(
-                                  (item) =>
-                                    item.Seq_No === datasourse[rowIndex].Seq_No
-                                );
-                                if (existingIndex === -1)
-                                  updatedArr.push({ ...datasourse[rowIndex] });
-                                else
-                                  updatedArr[existingIndex] =
-                                    datasourse[rowIndex];
-                                setUpdatedArr([...updatedArr]);
-                              }
-                            }}
-                            rowIndex={rowIndex}
-                          />
-                        ) : (
-                          row[col.key]
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                  {row.expanded && (
-                    <tr className="border-x border-b">
-                      <td className="text-center">
-                        {/* <EnterOutlined className="-scale-x-100 text-lg" /> */}
-                      </td>
-                      <td colSpan={cols.length}>{row.expanded}</td>
+                          ) : (
+                            row[col.key]
+                          )}
+                        </td>
+                      ))}
                     </tr>
-                  )}
-                </React.Fragment>
-              ))}
-              {!disableAdd && !disableAction && <tr>
-                <td onClick={disableForm ? undefined : addRow} className="text-center cursor-pointer p-2 hover:bg-gray-400">
-                  <PlusOutlined style={{ color: `${disableForm ? "lightgray" : ""}` }} className="text-xl" />
-                </td>
-              </tr>}
-            </tbody>
-          </table>
+                    {row.expanded && (
+                      <tr className="border-x border-b">
+                        <td className="text-center">
+                          {/* <EnterOutlined className="-scale-x-100 text-lg" /> */}
+                        </td>
+                        <td colSpan={cols.length}>{row.expanded}</td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+                {!disableAdd && !disableAction && <tr>
+                  <td onClick={disableForm ? undefined : addRow} className="text-center cursor-pointer p-2 hover:bg-gray-400">
+                    <PlusOutlined style={{ color: `${disableForm ? "lightgray" : ""}` }} className="text-xl" />
+                  </td>
+                </tr>}
+              </tbody>
+            </table>
+          </BABox>
         </>
       ) : (
-        <BABox className="flex justify-center flex-col items-center p-2">
+        <BABox className="flex justify-center flex-col items-center border border-[lightgrey] rounded-2xl p-2">
           <BAPera>No Data Found</BAPera>
           <BABox>
             <BAButton disabled={disableAdd || disableForm} onClick={addRow} label={"Add Row"} />
