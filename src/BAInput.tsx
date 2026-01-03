@@ -7,6 +7,7 @@ import BABox from "./BABox";
 import { OTPProps } from "antd/es/input/OTP";
 import {
     LoadingOutlined,
+    MailOutlined,
 } from '@ant-design/icons';
 
 type propsType = {
@@ -21,7 +22,7 @@ type propsType = {
     onBlur?: any,
     value?: any,
     type?: any
-    inputType?: "numericinput" | "maskinput" | "passwordinput" | "otpinput"
+    inputType?: "numericinput" | "maskinput" | "passwordinput" | "otpinput" | "emailinput"
     mask?: string,
     textAlign?: "left" | "right" | "center" | undefined,
     validationType?: "email" | "contactNumber",
@@ -119,6 +120,37 @@ export default function BAinput(props: propsType) {
                 onChange={onChange}
                 mask={otpMark}
                 className="custom-otp"
+            /> : inputType === "emailinput" ? <Input
+                suffix={loading ? <LoadingOutlined /> : suffix ? suffix : <MailOutlined />}
+                onBlur={(e) => {
+                    let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+                    if (!emailRegex.test(e.target.value)) {
+                        setIsError(true)
+                    } else {
+                        setIsError(false)
+                    }
+                    onBlur(e)
+                }}
+                status={isError ? "error" : ""}
+                type={'email'}
+                value={value}
+                placeholder={placeholder}
+                disabled={disabled || loading}
+                required={required}
+                style={{
+                    textAlign: textAlign || "left"
+                }}
+                onChange={(e) => {
+                    onChange(e)
+                    if (validationType === 'email') {
+                        if (emailRegex.test(e.target.value)) {
+                            setIsError(false);
+                        } else {
+                            setIsError(true);
+                        }
+                    }
+                }}
+                onFocus={onFocus}
             /> : <Input
                 suffix={loading ? <LoadingOutlined /> : suffix}
                 maxLength={maxlength}

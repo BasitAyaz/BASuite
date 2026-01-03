@@ -2,16 +2,12 @@
 
 import BAButton from "./BAButton";
 import BAinput from "./BAInput";
-import BASearchLookup from "./BASearchLookup";
 import BASelect from "./BASelect";
 import BASwitch from "./BASwitch";
 import BADate from "./BADate";
 import BABox from "./BABox";
 import BAPera from "./BAPera";
-import BAFieldset from "./BAFieldset";
-import BADragDropFile from "./BADragDrop";
 import BATextarea from "./BATextarea";
-import BAImagePicker from "./BAImagePicker";
 import BACheckbox from "./BACheckbox";
 import BARadio from "./BARadio";
 
@@ -23,59 +19,14 @@ type propsType = {
     disabledForm?: boolean,
     rowChangeEv?: any,
     rowIndex?: number,
-    apiFunctions?: string,
 }
 
 export default function BAComponentSwitcher(props: propsType) {
-    const { model, setModel, element, disabledForm, rowChangeEv, rowIndex, apiFunctions } = props;
+    const { model, setModel, element, disabledForm, rowChangeEv, rowIndex } = props;
     const fillModel = (key: any, val: any) => {
         model[key] = val;
         setModel({ ...model });
     };
-
-    const handleLookupBlur = (key: string, value: string, controller: string, element: formElement) => {
-        // Get the current value from model[controller] for the specified key
-        const currentValue = model[controller]?.[key];
-        // Only proceed if the value does not match the current value
-        if (currentValue !== value && currentValue) {
-            const lookupData = Object.keys(model[controller] || {}).reduce((acc, objKey) => {
-                acc[objKey] = objKey === key ? value : '';
-                return acc;
-            }, {} as Record<string, string>);
-            if (element.reqFields?.length) {
-                Object.keys(lookupData).forEach(key => {
-                    if (!element.reqFields?.includes(key)) delete lookupData[key]
-                })
-            }
-            if (element.fieldAlias) lookupData[key] = lookupData[element.fieldAlias]
-            // Update the model with the modified lookupData
-            setModel({ ...model, ...lookupData, [element.controller]: undefined });
-            if (rowChangeEv) {
-                rowChangeEv(null, lookupData, element, rowIndex)
-            }
-            return;
-        } setModel({ ...model, [element.controller]: undefined })
-    };
-
-
-    const handleMultiSelect = (element: formElement, selectedRows: any[], isMultiple?: boolean, arrKey?: string) => {
-        if (isMultiple && arrKey) {
-            const modifiedData = [];
-            for (var i = 0; i < selectedRows.length; i++) {
-                const lookupData = { ...selectedRows[i] }
-                if (element.fieldAlias) lookupData[element.key] = lookupData[element.fieldAlias];
-                if (element.reqFields?.length) Object.keys(lookupData).forEach(key => {
-                    if (!element.reqFields?.includes(key)) delete lookupData[key]
-                })
-                modifiedData.push({ ...lookupData })
-            }
-            setModel({ ...model, [arrKey]: modifiedData })
-        }
-    }
-
-    const uploadFile = (blob: Blob, key: string) => {
-        setModel({ ...model, [key]: blob })
-    }
 
     switch (element.elementType) {
         case "input":
@@ -165,62 +116,62 @@ export default function BAComponentSwitcher(props: propsType) {
                 required={element.required}
                 value={model[element.key]}
             />
-        case "lookup":
-            return <BASearchLookup
-                label={element.label}
-                controller={element.controller}
-                data={element.data}
-                params={element.params}
-                config={element.config}
-                displayField={element.displayField || ""}
-                value={model && model[element.key]}
-                multiple={element.multiple}
-                required={element.required}
-                allowMultiple={element.multiSelect}
-                disabled={disabledForm || element.disabled}
-                type={element.type}
-                onSelectMultiple={(data: any[]) => handleMultiSelect(element, data, element.multiSelect, element.arrKey)}
-                onCancel={() => {
-                    if (element.onCancel) {
-                        element.onCancel(rowIndex);
-                    }
-                }}
-                onRowClick={async (i: number, data: any, list: any[]) => {
-                    const lookupData = { ...data };
-                    setModel({ ...model, [element.key]: lookupData[element.valueField || ""] });
-                    if (element.ChangeEv) {
-                        element.ChangeEv(rowIndex, lookupData[element.key], lookupData, element, list);
-                    }
-                    if (rowChangeEv) {
-                        rowChangeEv(null, lookupData, element, rowIndex);
-                    }
-                }}
-                useLookup={element.useLookup}
-                onBlur={() => handleLookupBlur(element.fieldAlias || element.key, model[element.key], element.controller, element)}
-                onChange={(e: any, val: any, obj: any) => {
-                    if (val) {
-                        fillModel(element.key, val);
-                        if (element.ChangeEv) {
-                            element.ChangeEv(e, val, obj, element, rowIndex);
-                        }
-                    }
-                    else if (!element.multiple) {
-                        const lookupData: any = {};
-                        if (element.reqFields?.length) {
-                            for (var i = 0; i < element.reqFields.length; i++) {
-                                lookupData[element.reqFields[i]] = "";
-                            }
-                        }
-                        (element.arrKey && (!val || !obj)) ? setModel({ ...model, [element.arrKey]: [], ...lookupData }) : setModel({ ...model, [element.key]: e ? e.target.value : "", ...lookupData });
-                        if (rowChangeEv) {
-                            rowChangeEv(e, (element.type == 'number' ? Number(val) : val), element, rowIndex);
-                        }
-                    } else {
-                        if (element.arrKey && (!val || !obj)) setModel({ ...model, [element.arrKey]: [], [element.key]: "" });
-                    }
-                }}
-                apiFunctions={apiFunctions}
-            />
+        // case "lookup":
+        //     return <BASearchLookup
+        //         label={element.label}
+        //         controller={element.controller}
+        //         data={element.data}
+        //         params={element.params}
+        //         config={element.config}
+        //         displayField={element.displayField || ""}
+        //         value={model && model[element.key]}
+        //         multiple={element.multiple}
+        //         required={element.required}
+        //         allowMultiple={element.multiSelect}
+        //         disabled={disabledForm || element.disabled}
+        //         type={element.type}
+        //         onSelectMultiple={(data: any[]) => handleMultiSelect(element, data, element.multiSelect, element.arrKey)}
+        //         onCancel={() => {
+        //             if (element.onCancel) {
+        //                 element.onCancel(rowIndex);
+        //             }
+        //         }}
+        //         onRowClick={async (i: number, data: any, list: any[]) => {
+        //             const lookupData = { ...data };
+        //             setModel({ ...model, [element.key]: lookupData[element.valueField || ""] });
+        //             if (element.ChangeEv) {
+        //                 element.ChangeEv(rowIndex, lookupData[element.key], lookupData, element, list);
+        //             }
+        //             if (rowChangeEv) {
+        //                 rowChangeEv(null, lookupData, element, rowIndex);
+        //             }
+        //         }}
+        //         useLookup={element.useLookup}
+        //         onBlur={() => handleLookupBlur(element.fieldAlias || element.key, model[element.key], element.controller, element)}
+        //         onChange={(e: any, val: any, obj: any) => {
+        //             if (val) {
+        //                 fillModel(element.key, val);
+        //                 if (element.ChangeEv) {
+        //                     element.ChangeEv(e, val, obj, element, rowIndex);
+        //                 }
+        //             }
+        //             else if (!element.multiple) {
+        //                 const lookupData: any = {};
+        //                 if (element.reqFields?.length) {
+        //                     for (var i = 0; i < element.reqFields.length; i++) {
+        //                         lookupData[element.reqFields[i]] = "";
+        //                     }
+        //                 }
+        //                 (element.arrKey && (!val || !obj)) ? setModel({ ...model, [element.arrKey]: [], ...lookupData }) : setModel({ ...model, [element.key]: e ? e.target.value : "", ...lookupData });
+        //                 if (rowChangeEv) {
+        //                     rowChangeEv(e, (element.type == 'number' ? Number(val) : val), element, rowIndex);
+        //                 }
+        //             } else {
+        //                 if (element.arrKey && (!val || !obj)) setModel({ ...model, [element.arrKey]: [], [element.key]: "" });
+        //             }
+        //         }}
+        //         apiFunctions={apiFunctions}
+        //     />
         case "datepicker":
             return (
                 <BADate
@@ -314,25 +265,6 @@ export default function BAComponentSwitcher(props: propsType) {
                     <BAPera className="">{model[element.key]}</BAPera>
                 </BABox>
             );
-        case "imageupload":
-            return (
-                <>
-                    <BAImagePicker
-                        onChange={(file) => fillModel(element.key, file)}
-                        uploadText={element.label}
-                        value={model[element.key]}
-                    />
-                </>
-            );
-        case "dragfile":
-            return (
-                <>
-                    <BADragDropFile
-                        onFileUpload={(file) => uploadFile(file, element.key)}
-                        uploadText={element.label}
-                    />
-                </>
-            )
         default:
             return null;
     }
@@ -341,12 +273,12 @@ export default function BAComponentSwitcher(props: propsType) {
 
 export type formElement = {
     col: 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5 | 5.5 | 6 | 6.5 | 7 | 7.5 | 8 | 8.5 | 9 | 9.5 | 10 | 10.5 | 11 | 11.5 | 12,
-    elementType: "input" | "datepicker" | "select" | "radio" | "lookup" | "checkbox" | "boolean" | "textarea" | "button" | "custombody" | "heading" | "text" | "dragfile" | "imageupload",
+    elementType: "input" | "datepicker" | "select" | "radio" | "checkbox" | "boolean" | "textarea" | "button" | "custombody" | "heading" | "text",
     key: string,
     label: string,
     placeholder?: string,
     textAlign?: "left" | "right" | "center" | undefined,
-    inputType?: "numericinput" | "maskinput" | "passwordinput" | "otpinput",
+    inputType?: "numericinput" | "maskinput" | "passwordinput" | "otpinput" | "emailinput",
     mask?: string,
     lenght?: number,
     otpMark?: string,
@@ -354,7 +286,11 @@ export type formElement = {
     api?: string,
     fillObj?: any,
     valueField?: string | undefined,
-    options?: any,
+    options?: {
+        value: any,
+        label: string,
+        disabled?: boolean,
+    }[],
     ChangeEv?: any,
     onCancel?: any,
     blurEv?: any,

@@ -3,6 +3,7 @@ import BABox from "./BABox";
 import BAButton from "./BAButton";
 import BACheckbox from "./BACheckbox";
 import BACollapse from "./BACollapse";
+import { formElement } from "./BAComponentSwitcher";
 import BADate from "./BADate";
 import BAFieldset from "./BAFieldset";
 import BAFormElement from "./BAFormElement";
@@ -58,3 +59,5 @@ export {
     CreateConfig,
     MasterContainer,
 }
+
+export type { formElement };

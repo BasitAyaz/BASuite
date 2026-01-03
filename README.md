@@ -84,6 +84,7 @@ MIT © [Basit Ahmed](https://github.com/BasitAyaz)
 
 - [NPM Package](https://www.npmjs.com/package/basuite)
 - [GitHub Repository](https://github.com/BasitAyaz/BASuite)
+- [Documentation](https://ba-suite-docs.vercel.app/) 
 
 ---
 

@@ -45,15 +45,11 @@ export default function BAGrid(props: propsType) {
     <BABox
       className={"overflow-x-auto h-[calc(100vh-16rem)]"}
     >
-      <table
+      {loading ? <BALoader /> : <table
         style={{ tableLayout: "auto" }}
-        className={
-          loading
-            ? "blur-background min-w-full divide-y overflow-hidden divide-gray-200"
-            : "min-w-full divide-y  overflow-hidden divide-gray-200"
-        }
+        className="w-full divide-y  overflow-hidden divide-gray-200"
       >
-        <thead style={{ backgroundColor: token.token.colorPrimary, color: "white" }}>
+        <thead style={{ backgroundColor: token?.token?.colorPrimary || "#0d1b2a", color: "white" }}>
           <tr>
             {cols.map((col: any, index: number) => (
               <th
@@ -89,9 +85,6 @@ export default function BAGrid(props: propsType) {
                 ))}
               </tr>
             ))
-          ) : loading ? (
-            <tr>
-              <td colSpan={cols.length + 1} className="text-center py-4"><BALoader /></td></tr>
           ) : (
             <tr>
               <td colSpan={cols.length + 1} className="text-center py-4">
@@ -102,7 +95,7 @@ export default function BAGrid(props: propsType) {
             </tr>
           )}
         </tbody>
-      </table>
+      </table>}
     </BABox>
   );
 }

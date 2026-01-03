@@ -4,7 +4,6 @@ import { Col, Row, Skeleton } from "antd";
 import BAComponentSwitcher, { formElement } from "./BAComponentSwitcher"
 import BABox from "./BABox";
 import BAButton from "./BAButton";
-import { SaveOutlined } from '@ant-design/icons';
 import { checkRequiredElement } from "./config/helpers";
 
 type propsType = {
@@ -19,11 +18,30 @@ type propsType = {
     buttonContainerClass?: string,
     customButton?: React.ReactNode,
     hideButton?: boolean
-    apiFunctions?: any
+    disabledSaveButton?: boolean
+    saveButtonLabel?: string
+    saveButtonIcon?: any
+    saveButtonAlignment?: "center" | "start" | "end" | undefined
+    saveButtonType?: "primary" | "default" | "dashed" | "link" | "text" | undefined
 }
 
 export default function BAFormElement(props: propsType) {
-    const { model, setModel, formElement, disabledForm, saveLoader, onSaveClick, loading, customButton, hideButton, apiFunctions } = props;
+    const {
+        model,
+        setModel,
+        formElement,
+        disabledForm,
+        saveLoader,
+        onSaveClick,
+        loading,
+        customButton,
+        hideButton,
+        saveButtonLabel,
+        saveButtonIcon,
+        disabledSaveButton,
+        saveButtonAlignment,
+        saveButtonType,
+    } = props;
 
     const saveClick = () => {
         if (checkRequiredElement(formElement, model) && onSaveClick) {
@@ -43,7 +61,6 @@ export default function BAFormElement(props: propsType) {
                                 model={model}
                                 setModel={setModel}
                                 disabledForm={disabledForm}
-                                apiFunctions={apiFunctions}
                             />
                         </BABox>}
                     </Col>
@@ -51,8 +68,8 @@ export default function BAFormElement(props: propsType) {
             </Row>
         </BABox>
         {!hideButton && <BABox className="sticky bottom-0 z-10">
-            <BABox className={"p-2 shadow bg-[#f8f9fa] rounded text-end"}>
-                {customButton ? customButton : <BAButton className="bg-secondary" disabled={loading} loading={saveLoader} onClick={saveClick} icon={<SaveOutlined />} label="Save" />}
+            <BABox className={`p-2 border-t border-gray-400 text-${saveButtonAlignment || "end"}`}>
+                {customButton ? customButton : <BAButton type={saveButtonType} className="bg-secondary" disabled={disabledSaveButton || loading} loading={saveLoader} onClick={saveClick} icon={saveButtonIcon} label={saveButtonLabel ? saveButtonLabel : "Save"} />}
             </BABox>
         </BABox>}
     </>

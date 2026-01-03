@@ -9,21 +9,15 @@ import { goBack } from "./config/helpers";
 type propsType = {
     title: string,
     headerOptions?: any[],
-    disableNav?: boolean,
-    onFirst?: any,
-    onPrevious?: any,
-    onNext?: any,
-    onLast?: any,
-    authorInfo?: { Created?: string, modified?: string, Posted?: string }
-    showAuthorInfo?: boolean;
     disableBack?: boolean
-    extraTitle?: any
+    extraTitle?: any,
+    headClassName?: string,
 }
 export default function BAScreenHeader(props: propsType) {
-    const { title, headerOptions, disableBack, extraTitle } = props;
+    const { title, headerOptions, disableBack, extraTitle, headClassName } = props;
 
     return <>
-        <BABox className="py-2 border-bottom border-b-2 border-[#1B4394] flex justify-between items-center">
+        <BABox className={`py-2 border-bottom border-b-2 border-[#1B4394] flex justify-between items-center ${headClassName}`}>
             <BABox className="flex items-center md:pb-0">
                 {!disableBack && <BAIconButton onClick={goBack} icon={<ArrowLeftOutlined />} />}
                 <BAPera className="md:text-3xl text-xl ms-2">{title} {extraTitle}</BAPera>

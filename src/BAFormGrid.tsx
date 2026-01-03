@@ -199,7 +199,7 @@ export default function BAFormGrid(props: propsType) {
           </BABox>
         </>
       ) : (
-        <BABox className="flex justify-center flex-col items-center border border-[lightgrey] rounded-2xl p-2">
+        <BABox className="flex justify-center flex-col items-center bg-[#e9ecef] p-10">
           <BAPera>No Data Found</BAPera>
           <BABox>
             <BAButton disabled={disableAdd || disableForm} onClick={addRow} label={"Add Row"} />
